@@ -12,14 +12,15 @@
   </style>
 </head>
 <body>
+  <!-- Load Telegram Web App JS -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <h1>Menu</h1>
   <div id="menu-container"></div>
   <div id="total">Total: $0.00</div>
   <button onclick="submitOrder()">Done</button>
 
   <script>
-    console.log("Telegram.WebApp:", Telegram?.WebApp);
     const menuItems = [
       { id: 1, name: "Latte", price: 3.5 },
       { id: 2, name: "Croissant", price: 2.0 },
@@ -52,6 +53,11 @@
     });
 
     function submitOrder() {
+      if (!window.Telegram || !Telegram.WebApp) {
+        alert("⚠️ Please open this page from Telegram using the bot button.");
+        return;
+      }
+
       const orderItems = menuItems
         .map(item => ({ name: item.name, qty: parseInt(document.getElementById(`item-${item.id}`).value) }))
         .filter(i => i.qty > 0);
@@ -63,7 +69,6 @@
 
       const order = { items: orderItems };
 
-      // Send to bot and close Web App
       Telegram.WebApp.sendData(JSON.stringify(order));
       Telegram.WebApp.close();
     }
